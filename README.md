@@ -1,2 +1,3 @@
-# western_shooter
+# Western Shooter
+
 Westen shooter game in PyGame.

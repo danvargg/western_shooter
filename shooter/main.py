@@ -6,49 +6,55 @@ from pytmx.util_pygame import load_pygame
 
 from settings import WINDOW_WIDTH, WINDOW_HEIGHT, PATHS
 from player import Player
-from sprites import AllSprites, Sprite
+from sprites import AllSprites, Sprite, Bullet
 
 
 class WesternShooter:
-    """_summary_
-    """
+    """Game class."""
 
     def __init__(self):
-        """_summary_
-        """
+        """Initialize the game."""
         pg.init()
         self.display_surface = pg.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pg.display.set_caption('Western shooter')
         self.clock = pg.time.Clock()
+        self.bullet_surf = pg.image.load(PATHS['bullet']).convert_alpha()
 
         # Groups
         self.all_sprites = AllSprites()
+        self.obstacles = pg.sprite.Group()
+        self.bullets = pg.sprite.Group()
 
         self.setup()
 
+    def create_bullet(self, pos: pg.math.Vector2, direction: pg.math.Vector2) -> None:
+        Bullet(pos=pos, direction=direction, surf=self.bullet_surf, groups=[self.all_sprites, self.bullets])
+
     def setup(self):
-        """_summary_
-        """
+        """Setup map, fence, objects, and entities."""
         tmx_map = load_pygame(PATHS['map_data'])
 
         # Tiles
         for x, y, surf in tmx_map.get_layer_by_name('Fence').tiles():
-            Sprite(pos=(x * 64, y * 64), surf=surf, groups=self.all_sprites)
+            Sprite(pos=(x * 64, y * 64), surf=surf, groups=[self.all_sprites, self.obstacles])
 
         # Objects
         for obj in tmx_map.get_layer_by_name('Objects'):
-            Sprite(pos=(obj.x, obj.y), surf=obj.image, groups=self.all_sprites)
+            Sprite(pos=(obj.x, obj.y), surf=obj.image, groups=[self.all_sprites, self.obstacles])
 
         # Player
         for obj in tmx_map.get_layer_by_name('Entities'):
             if obj.name == 'Player':
                 self.player = Player(
-                    pos=(obj.x, obj.y), groups=self.all_sprites, path=PATHS['player'], collision_sprites=None
+                    pos=(obj.x, obj.y),
+                    groups=self.all_sprites,
+                    path=PATHS['player'],
+                    collision_sprites=self.obstacles,
+                    create_bullet=self.create_bullet,
                 )
 
     def run(self):
-        """_summary_
-        """
+        """Game loop."""
         while True:
             # event loop
             for event in pg.event.get():

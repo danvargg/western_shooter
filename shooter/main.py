@@ -7,6 +7,7 @@ from pytmx.util_pygame import load_pygame
 from settings import WINDOW_WIDTH, WINDOW_HEIGHT, PATHS
 from player import Player
 from sprites import AllSprites, Sprite, Bullet
+from enemies import Coffin
 
 
 class WesternShooter:
@@ -28,6 +29,7 @@ class WesternShooter:
         self.setup()
 
     def create_bullet(self, pos: pg.math.Vector2, direction: pg.math.Vector2) -> None:
+        # FIXME: can't shoot in diagonal
         Bullet(pos=pos, direction=direction, surf=self.bullet_surf, groups=[self.all_sprites, self.bullets])
 
     def setup(self):
@@ -51,6 +53,16 @@ class WesternShooter:
                     path=PATHS['player'],
                     collision_sprites=self.obstacles,
                     create_bullet=self.create_bullet,
+                )
+
+            if obj.name == 'Coffin':
+                Coffin(
+                    pos=(obj.x, obj.y), groups=self.all_sprites, path=PATHS['coffin'], collision_sprites=self.obstacles
+                )
+
+            if obj.name == 'Cactus':
+                Coffin(
+                    pos=(obj.x, obj.y), groups=self.all_sprites, path=PATHS['cactus'], collision_sprites=self.obstacles
                 )
 
     def run(self):

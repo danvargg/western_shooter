@@ -20,6 +20,11 @@ class AllSprites(pg.sprite.Group):
         self.bg = pg.image.load(PATHS['background']).convert()  # TODO: why only convert?
 
     def customize_draw(self, player):
+        """_summary_
+
+        Args:
+            player (_type_): _description_
+        """
         # Change the offset vector
         self.offset.x = player.rect.centerx - WINDOW_WIDTH / 2
         self.offset.y = player.rect.centery - WINDOW_HEIGHT / 2
@@ -40,13 +45,13 @@ class Sprite(pg.sprite.Sprite):
         pg (_type_): _description_
     """
 
-    def __init__(self, pos: Tuple[float, float], surf, groups) -> None:
+    def __init__(self, pos: Tuple[float, float], surf: pg.Surface, groups: list[AllSprites]) -> None:
         """_summary_
 
         Args:
             pos (Tuple[float, float]): _description_
-            surf (_type_): _description_
-            groups (_type_): _description_
+            surf (pg.Surface): _description_
+            groups (list[AllSprites]): _description_
         """
         super().__init__(groups)
 
@@ -56,8 +61,23 @@ class Sprite(pg.sprite.Sprite):
 
 
 class Bullet(pg.sprite.Sprite):
-    def __init__(self, pos, direction, surf, groups):
+    """_summary_
+    """
+
+    def __init__(
+        self, pos: pg.math.Vector2, direction: pg.math.Vector2, surf: pg.Surface, groups: list[AllSprites]
+    ) -> None:
+        """_summary_
+
+        Args:
+            pos (pg.math.Vector2): _description_
+            direction (pg.math.Vector2): _description_
+            surf (pg.Surface): _description_
+            groups (list[AllSprites]): _description_
+        """
+
         super().__init__(groups)
+
         self.image = surf
         self.rect = self.image.get_rect(center=pos)
 
@@ -66,6 +86,6 @@ class Bullet(pg.sprite.Sprite):
         self.direction = direction
         self.speed = 400
 
-    def update(self, dt):
+    def update(self, dt: float):
         self.pos += self.direction * self.speed * dt
         self.rect.center = (round(self.pos.x), round(self.pos.y))

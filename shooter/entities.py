@@ -43,6 +43,27 @@ class Entity(pg.sprite.Sprite):
         # Attack
         self.attacking = False
 
+        # Health
+        self.health = 3
+        self.is_vulnerable = True
+        self.hit_time = None
+
+    def damage(self):
+        if self.is_vulnerable:
+            self.health -= 1
+            self.is_vulnerable = False
+            self.hit_time = pg.time.get_ticks()
+
+    def check_death(self):
+        if self.health <= 0:
+            self.kill()
+
+    def vulnerability_timer(self):
+        if not self.is_vulnerable:
+            current_time = pg.time.get_ticks()
+            if current_time - self.hit_time > 400:
+                self.is_vulnerable = True
+
     def import_assets(self, path):
         """_summary_
 

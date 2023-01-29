@@ -1,5 +1,5 @@
 """Player module."""
-import os
+import sys
 from typing import Tuple
 
 import pygame as pg
@@ -101,8 +101,16 @@ class Player(Entity):
 
         self.image = current_animation[int(self.frame_index)]
 
+    def check_death(self):
+        if self.health <= 0:
+            pg.quit()
+            sys.exit()
+
     def update(self, dt: float):
         self.input()
         self.get_status()
         self.move(dt)
         self.animate(dt)
+
+        self.check_death()
+        self.vulnerability_timer()

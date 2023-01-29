@@ -25,12 +25,32 @@ class WesternShooter:
         self.all_sprites = AllSprites()
         self.obstacles = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
+        self.enemies = pg.sprite.Group()
 
         self.setup()
 
     def create_bullet(self, pos: pg.math.Vector2, direction: pg.math.Vector2) -> None:
         # FIXME: can't shoot in diagonal
         Bullet(pos=pos, direction=direction, surf=self.bullet_surf, groups=[self.all_sprites, self.bullets])
+
+    def bullet_collision(self) -> None:
+
+        # bullet obstacle collision
+        for obstacle in self.obstacles.sprites():
+            pg.sprite.spritecollide(obstacle, self.bullets, True)
+
+        # bullet enemies collision
+        for bullet in self.bullets.sprites():
+            sprites = pg.sprite.spritecollide(bullet, self.enemies, False)
+
+            if sprites:
+                bullet.kill()
+                for sprite in sprites:
+                    sprite.damage()
+
+        # player bullet collision
+        if pg.sprite.spritecollide(self.player, self.bullets, True):
+            self.player.damage()
 
     def setup(self):
         """Setup map, fence, objects, and entities."""
@@ -58,7 +78,7 @@ class WesternShooter:
             if obj.name == 'Coffin':
                 Coffin(
                     pos=(obj.x, obj.y),
-                    groups=self.all_sprites,
+                    groups=[self.all_sprites, self.enemies],
                     path=PATHS['coffin'],
                     collision_sprites=self.obstacles,
                     player=self.player
@@ -67,10 +87,11 @@ class WesternShooter:
             if obj.name == 'Cactus':
                 Cactus(
                     pos=(obj.x, obj.y),
-                    groups=self.all_sprites,
+                    groups=[self.all_sprites, self.enemies],
                     path=PATHS['cactus'],
                     collision_sprites=self.obstacles,
-                    player=self.player
+                    player=self.player,
+                    create_bullet=self.create_bullet
                 )
 
     def run(self):
@@ -86,6 +107,7 @@ class WesternShooter:
 
             # Update groups
             self.all_sprites.update(dt=dt)
+            self.bullet_collision()
 
             # Draw groups
             self.display_surface.fill('black')

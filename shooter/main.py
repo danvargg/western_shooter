@@ -2,10 +2,11 @@
 import sys
 
 import pygame as pg
+from pytmx.util_pygame import load_pygame
 
 from settings import WINDOW_WIDTH, WINDOW_HEIGHT, PATHS
 from player import Player
-from sprites import AllSprites
+from sprites import AllSprites, Sprite
 
 
 class WesternShooter:
@@ -28,7 +29,22 @@ class WesternShooter:
     def setup(self):
         """_summary_
         """
-        self.player = Player(pos=(200, 200), groups=self.all_sprites, path=PATHS['player'], collision_sprites=None)
+        tmx_map = load_pygame(PATHS['map_data'])
+
+        # Tiles
+        for x, y, surf in tmx_map.get_layer_by_name('Fence').tiles():
+            Sprite(pos=(x * 64, y * 64), surf=surf, groups=self.all_sprites)
+
+        # Objects
+        for obj in tmx_map.get_layer_by_name('Objects'):
+            Sprite(pos=(obj.x, obj.y), surf=obj.image, groups=self.all_sprites)
+
+        # Player
+        for obj in tmx_map.get_layer_by_name('Entities'):
+            if obj.name == 'Player':
+                self.player = Player(
+                    pos=(obj.x, obj.y), groups=self.all_sprites, path=PATHS['player'], collision_sprites=None
+                )
 
     def run(self):
         """_summary_

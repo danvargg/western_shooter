@@ -1,5 +1,6 @@
 """Player module."""
 import os
+from typing import Tuple
 
 import pygame as pg
 from pygame.math import Vector2 as vector
@@ -8,7 +9,7 @@ from pygame.math import Vector2 as vector
 class Player(pg.sprite.Sprite):
     """Player class."""
 
-    def __init__(self, pos: tuple, groups: pg.sprite.Group, path: str, collision_sprites) -> None:
+    def __init__(self, pos: Tuple[float, float], groups: pg.sprite.Group, path: str, collision_sprites) -> None:
         """_summary_
 
         Args:

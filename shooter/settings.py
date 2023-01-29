@@ -6,5 +6,6 @@ PATHS = {
     'player': 'shooter/graphics/player',
     'coffin': 'shooter/graphics/monster/coffin',
     'cactus': 'shooter/graphics/monster/cactus',
-    'background': 'shooter/graphics/other/bg.png'
+    'background': 'shooter/graphics/other/bg.png',
+    'map_data': 'shooter/data/map.tmx',
 }

@@ -7,7 +7,7 @@ from pytmx.util_pygame import load_pygame
 from settings import WINDOW_WIDTH, WINDOW_HEIGHT, PATHS
 from player import Player
 from sprites import AllSprites, Sprite, Bullet
-from enemies import Coffin
+from enemies import Coffin, Cactus
 
 
 class WesternShooter:
@@ -57,12 +57,20 @@ class WesternShooter:
 
             if obj.name == 'Coffin':
                 Coffin(
-                    pos=(obj.x, obj.y), groups=self.all_sprites, path=PATHS['coffin'], collision_sprites=self.obstacles
+                    pos=(obj.x, obj.y),
+                    groups=self.all_sprites,
+                    path=PATHS['coffin'],
+                    collision_sprites=self.obstacles,
+                    player=self.player
                 )
 
             if obj.name == 'Cactus':
-                Coffin(
-                    pos=(obj.x, obj.y), groups=self.all_sprites, path=PATHS['cactus'], collision_sprites=self.obstacles
+                Cactus(
+                    pos=(obj.x, obj.y),
+                    groups=self.all_sprites,
+                    path=PATHS['cactus'],
+                    collision_sprites=self.obstacles,
+                    player=self.player
                 )
 
     def run(self):

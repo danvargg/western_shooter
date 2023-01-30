@@ -39,14 +39,10 @@ class AllSprites(pg.sprite.Group):
 
 
 class Sprite(pg.sprite.Sprite):
-    """_summary_
-
-    Args:
-        pg (_type_): _description_
-    """
+    """Sprite class."""
 
     def __init__(self, pos: Tuple[float, float], surf: pg.Surface, groups: list[AllSprites]) -> None:
-        """_summary_
+        """Initializes sprite.
 
         Args:
             pos (Tuple[float, float]): _description_
@@ -79,6 +75,7 @@ class Bullet(pg.sprite.Sprite):
         super().__init__(groups)
 
         self.image = surf
+        self.mask = pg.mask.from_surface(self.image)
         self.rect = self.image.get_rect(center=pos)
 
         # float based movement

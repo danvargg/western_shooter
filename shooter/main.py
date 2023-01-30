@@ -29,6 +29,9 @@ class WesternShooter:
 
         self.setup()
 
+        self.bg_music = pg.mixer.Sound(PATHS['music'])
+        self.bg_music.play(loops=-1)
+
     def create_bullet(self, pos: pg.math.Vector2, direction: pg.math.Vector2) -> None:
         # FIXME: can't shoot in diagonal
         Bullet(pos=pos, direction=direction, surf=self.bullet_surf, groups=[self.all_sprites, self.bullets])
@@ -37,11 +40,11 @@ class WesternShooter:
 
         # bullet obstacle collision
         for obstacle in self.obstacles.sprites():
-            pg.sprite.spritecollide(obstacle, self.bullets, True)
+            pg.sprite.spritecollide(obstacle, self.bullets, True, pg.sprite.collide_mask)
 
         # bullet enemies collision
         for bullet in self.bullets.sprites():
-            sprites = pg.sprite.spritecollide(bullet, self.enemies, False)
+            sprites = pg.sprite.spritecollide(bullet, self.enemies, False, pg.sprite.collide_mask)
 
             if sprites:
                 bullet.kill()
@@ -49,7 +52,7 @@ class WesternShooter:
                     sprite.damage()
 
         # player bullet collision
-        if pg.sprite.spritecollide(self.player, self.bullets, True):
+        if pg.sprite.spritecollide(self.player, self.bullets, True, pg.sprite.collide_mask):
             self.player.damage()
 
     def setup(self):

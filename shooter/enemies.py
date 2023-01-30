@@ -114,6 +114,7 @@ class Coffin(Entity, Enemy):
                 self.attacking = False
 
         self.image = current_animation[int(self.frame_index)]
+        self.mask = pg.mask.from_surface(self.image)
 
     def update(self, dt: float) -> None:
         """_summary_
@@ -126,6 +127,7 @@ class Coffin(Entity, Enemy):
         self.attack()
         self.move(dt)
         self.animate(dt)
+        self.blink()
 
         self.check_death()
         self.vulnerability_timer()
@@ -169,6 +171,7 @@ class Cactus(Entity, Enemy):
             self.attacking = True
             self.frame_index = 0
             self.bullet_shot = False
+            self.shoot_sound.play()
 
         if self.attacking:
             self.status = self.status.split('_')[0] + '_attack'
@@ -194,6 +197,7 @@ class Cactus(Entity, Enemy):
                 self.attacking = False
 
         self.image = current_animation[int(self.frame_index)]
+        self.mask = pg.mask.from_surface(self.image)
 
     def update(self, dt: float) -> None:
         """_summary_
@@ -206,6 +210,7 @@ class Cactus(Entity, Enemy):
         self.attack()
         self.move(dt)
         self.animate(dt)
+        self.blink()
 
         self.check_death()
         self.vulnerability_timer()

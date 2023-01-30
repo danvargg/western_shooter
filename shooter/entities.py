@@ -1,10 +1,12 @@
 """Game entities."""
 import os
 from typing import Tuple
+from math import sin
 
 import pygame as pg
 from pygame.math import Vector2 as vector
 
+from settings import PATHS
 from sprites import AllSprites
 
 
@@ -39,6 +41,7 @@ class Entity(pg.sprite.Sprite):
         # collisions
         self.hitbox = self.rect.inflate(-self.rect.width * 0.5, -self.rect.height / 2)  # FIXME: Magic numbers
         self.collision_sprites = collision_sprites
+        self.mask = pg.mask.from_surface(self.image)
 
         # Attack
         self.attacking = False
@@ -48,11 +51,33 @@ class Entity(pg.sprite.Sprite):
         self.is_vulnerable = True
         self.hit_time = None
 
+        # Sound
+        self.hit_sound = pg.mixer.Sound(PATHS['hit_sound'])
+        self.hit_sound.set_volume(0.1)
+        self.shoot_sound = pg.mixer.Sound(PATHS['bullet_sound'])
+        self.shoot_sound.set_volume(0.2)
+
+    def blink(self):
+        if not self.is_vulnerable:
+            if self.wave_value():
+                mask = pg.mask.from_surface(self.image)
+                white_surface = mask.to_surface()
+                white_surface.set_colorkey((0, 0, 0))
+                self.image = white_surface
+
+    def wave_value(self):
+        value = sin(pg.time.get_ticks())
+        if value >= 0:
+            return True
+        else:
+            return False
+
     def damage(self):
         if self.is_vulnerable:
             self.health -= 1
             self.is_vulnerable = False
             self.hit_time = pg.time.get_ticks()
+            self.hit_sound.play()
 
     def check_death(self):
         if self.health <= 0:

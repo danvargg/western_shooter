@@ -1,6 +1,6 @@
 """Player module."""
 import sys
-from typing import Tuple
+from typing import Tuple, Callable
 
 import pygame as pg
 from pygame.math import Vector2 as vector
@@ -18,20 +18,20 @@ class Player(Entity):
         groups: AllSprites,
         path: str,
         collision_sprites: pg.sprite.Group,
-        create_bullet  # TODO: <class 'method'>
+        create_bullet: Callable
     ) -> None:
-        """_summary_
+        """Initializes player.
 
         Args:
-            pos (tuple): _description_
-            groups (pg.sprite.Group): _description_
-            path (str): _description_
-            collision_sprites (_type_): _description_
+            pos (tuple): player position
+            groups (pg.sprite.Group): sprite groups
+            path (str): path to player sprites
+            collision_sprites ( pg.sprite.Group): collision sprites
+            create_bullet (Callable): function to create bullet
         """
 
         super().__init__(pos, groups, path, collision_sprites)
 
-        # Bullet
         self.create_bullet = create_bullet
         self.bullet_shot = False
 
@@ -93,6 +93,7 @@ class Player(Entity):
             bullet_start_pos = self.rect.center + self.bullet_direction * 80  # TODO: Magic number
             self.create_bullet(pos=bullet_start_pos, direction=self.bullet_direction)
             self.bullet_shot = True
+            self.shoot_sound.play()
 
         if self.frame_index >= len(current_animation):
             self.frame_index = 0
@@ -100,6 +101,7 @@ class Player(Entity):
                 self.attacking = False
 
         self.image = current_animation[int(self.frame_index)]
+        self.mask = pg.mask.from_surface(self.image)
 
     def check_death(self):
         if self.health <= 0:
@@ -111,6 +113,8 @@ class Player(Entity):
         self.get_status()
         self.move(dt)
         self.animate(dt)
+
+        self.blink()
 
         self.check_death()
         self.vulnerability_timer()

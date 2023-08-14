@@ -51,6 +51,13 @@ class Player(Entity):
         """
         keys = pg.key.get_pressed()
 
+        status_mappings = {
+            'left': vector(-1, 0),
+            'right': vector(1, 0),
+            'up': vector(0, -1),
+            'down': vector(0, 1)
+        }
+
         if not self.attacking:
 
             if keys[pg.K_RIGHT]:
@@ -77,11 +84,7 @@ class Player(Entity):
                 self.frame_index = 0
                 self.bullet_shot = False
 
-                match self.status.split('_')[0]:
-                    case 'left': self.bullet_direction = vector(-1, 0)
-                    case 'right': self.bullet_direction = vector(1, 0)
-                    case 'up': self.bullet_direction = vector(0, -1)
-                    case 'down': self.bullet_direction = vector(0, 1)
+                self.bullet_direction = status_mappings.get(self.status.split('_')[0], vector(0, 0))
 
     def animate(self, dt: float):
         current_animation = self.animations[self.status]
